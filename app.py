@@ -34,20 +34,26 @@ def save_config():
         data = request.json
         if 'panelConfig' in data:
             panel_cfg = data['panelConfig']
-            # Nettoyage pour éviter l'erreur TypeError: n.thresholdPatterns.forEach is not a function
+            # Nettoyage pour éviter les erreurs TypeError: forEach is not a function sur Grafana
             if 'cells' in panel_cfg:
                 for cell_name, cell_data in panel_cfg['cells'].items():
-                    if 'labelColor' in cell_data and 'thresholdPatterns' in cell_data['labelColor']:
-                        # On supprime thresholdPatterns s'il est vide ou si un thresholdPatternsRef est utilisé
-                        # Grafana s'attend à un tableau s'il est présent
-                        if not cell_data['labelColor']['thresholdPatterns'] or cell_data['labelColor'].get('thresholdPatternsRef'):
-                            del cell_data['labelColor']['thresholdPatterns']
-                    if 'fillColor' in cell_data and 'thresholdPatterns' in cell_data['fillColor']:
-                        if not cell_data['fillColor']['thresholdPatterns'] or cell_data['fillColor'].get('thresholdPatternsRef'):
-                            del cell_data['fillColor']['thresholdPatterns']
-                    if 'strokeColor' in cell_data and 'thresholdPatterns' in cell_data['strokeColor']:
-                        if not cell_data['strokeColor']['thresholdPatterns'] or cell_data['strokeColor'].get('thresholdPatternsRef'):
-                            del cell_data['strokeColor']['thresholdPatterns']
+                    # Nettoyage des thresholdPatterns
+                    for attr in ['labelColor', 'fillColor', 'strokeColor']:
+                        if attr in cell_data:
+                            # Supprime thresholdPatterns s'il est vide ou si un thresholdPatternsRef est utilisé
+                            if 'thresholdPatterns' in cell_data[attr]:
+                                if not cell_data[attr]['thresholdPatterns'] or cell_data[attr].get('thresholdPatternsRef'):
+                                    del cell_data[attr]['thresholdPatterns']
+                            
+                            # Correction pour labelColorCompound, fillColorCompound, strokeColorCompound
+                            # Grafana attend un tableau dans 'colors' s'il est défini. 
+                            # Si c'est "..." (valeur par défaut de l'exemple) ou vide, on le supprime.
+                            compound_attr = f"{attr}Compound"
+                            if compound_attr in cell_data:
+                                if 'colors' in cell_data[compound_attr]:
+                                    colors = cell_data[compound_attr]['colors']
+                                    if colors == "..." or not colors:
+                                        del cell_data[compound_attr]
 
             with open(PANEL_CONFIG_PATH, 'w', encoding='utf-8') as f:
                 f.write('---\n')
