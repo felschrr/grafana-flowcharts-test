@@ -1,7 +1,7 @@
 anchorLinks:
-  - link:
-      params: time
-      url: https://grafana.com/
+- link:
+    params: time
+    url: https://grafana.com/
 background:
   darkThemeColor: yellow
   lightThemeColor: green
@@ -14,7 +14,7 @@ cellColorMappings:
     green: green
     orange: orange
     red: red
-cellIdExtender: "@flowrpt"
+cellIdExtender: '@flowrpt'
 cellIdPreamble: cell-
 cellLabelDecimalPoints: null
 cells:
@@ -23,43 +23,43 @@ cells:
       constants:
         clockDataRef: test-data-large-sin
       dataRefs:
-        - test-data-large-sin
-        - test-data-large-cos
+      - test-data-large-sin
+      - test-data-large-cos
       datapoint: last
       drives:
-        - attribsGet:
-            boxWidth: width
-            boxX: x
-          attribsSet:
-            width: boxWidth
-            x: boxX
-          elementName: rect
-          elementPosition: 1
+      - attribsGet:
+          boxWidth: width
+          boxX: x
+        attribsSet:
+          width: boxWidth
+          x: boxX
+        elementName: rect
+        elementPosition: 1
       formulas:
-        - a = abs(data[clockDataRef])
-        - grafanaMyVarValue = concat(utils.variablesReplace('${myVar} '), string(a))
-        - utils.log('this is some of my namespace', clockDataRef, boxX, boxWidth, a,
-          grafanaMyVarValue, data)
+      - a = abs(data[clockDataRef])
+      - grafanaMyVarValue = concat(utils.variablesReplace('${myVar} '), string(a))
+      - utils.log('this is some of my namespace', clockDataRef, boxX, boxWidth, a,
+        grafanaMyVarValue, data)
       namespace: myWidget
     bespokeDataRef: null
     clickActions:
       grafanaVariables:
-        "false":
+        'false':
           myMulti:
-            - d
-            - e
-            - f
+          - d
+          - e
+          - f
           myVar1: off-myValue1-${cell.name}
           myVarN: off-myValueN
-        "true":
+        'true':
           myMulti:
-            - a
-            - b
-            - c
+          - a
+          - b
+          - c
           myVar1: on-myValue1-${cell.name}
           myVarN: on-myValueN
       highlighterSelection: inflow
-    dataRef: grafana-testdata-datasource
+    dataRef: test
     datapoint: last
     fillColor:
       bespokeDataRef: null
@@ -67,29 +67,29 @@ cells:
       datapoint: last
       gradientMode: hue
       thresholdPatterns:
-        - color: green
-          pattern: .*INFO.*
-        - color: amber
-          pattern: .*WARNING.*
-        - color: red
-          pattern: .*ERROR.*
-        - color: gray
-          pattern: .*
+      - color: green
+        pattern: .*INFO.*
+      - color: amber
+        pattern: .*WARNING.*
+      - color: red
+        pattern: .*ERROR.*
+      - color: gray
+        pattern: .*
       thresholdPatternsRef: depth
       thresholds:
-        - color: semi-dark-green
-          level: 0
-        - color: orange
-          level: 400
-        - color: red
-          level: 800
+      - color: semi-dark-green
+        level: 0
+      - color: orange
+        level: 400
+      - color: red
+        level: 800
       thresholdsRef: depth
     fillColorCompound:
-      colors: "..."
+      colors: '...'
       function: max
     fillColorElementFilter:
-      - name: .*
-        position: .*
+    - name: .*
+      position: .*
     fillLevel:
       bespokeDataRef: null
       dataRef: test-data-large-cos
@@ -120,18 +120,18 @@ cells:
       units: none
       unitsPostfix: MyUnits
       valueMappings:
-        - text: value is null
-          value: null
-        - text: value is 3
-          value: 3
-        - text: value is low
-          valueMax: 300
-        - text: value in range
-          valueMax: 600
-          valueMin: 300
-        - text: value is high
-          valueMin: 600
-      valueMappingsRef: ""
+      - text: value is null
+        value: null
+      - text: value is 3
+        value: 3
+      - text: value is low
+        valueMax: 300
+      - text: value in range
+        valueMax: 600
+        valueMin: 300
+      - text: value is high
+        valueMin: 600
+      valueMappingsRef: ''
     labelColor:
       bespokeDataRef: null
       dataRef: test-data-large-cos
@@ -139,32 +139,32 @@ cells:
       gradientMode: hue
       thresholdPatterns:
         queuecount:
-          - color: green
-            order: null
-            pattern: .*INFO.*
-          - color: amber
-            order: null
-            pattern: .*WARNING.*
-          - color: red
-            order: null
-            pattern: .*ERROR.*
-          - color: gray
-            order: null
-            pattern: .*
+        - color: green
+          order: null
+          pattern: .*INFO.*
+        - color: amber
+          order: null
+          pattern: .*WARNING.*
+        - color: red
+          order: null
+          pattern: .*ERROR.*
+        - color: gray
+          order: null
+          pattern: .*
       thresholdPatternsRef: queuecount
       thresholds:
-        - color: green
-          level: 0
-          order: null
-        - color: orange
-          level: 500
-          order: null
-        - color: red
-          level: 1000
-          order: null
+      - color: green
+        level: 0
+        order: null
+      - color: orange
+        level: 500
+        order: null
+      - color: red
+        level: 1000
+        order: null
       thresholdsRef: depth
     labelColorCompound:
-      colors: "..."
+      colors: '...'
       function: max
     link:
       params: time
@@ -177,33 +177,33 @@ cells:
       datapoint: last
       gradientMode: hue
       thresholdPatterns:
-        - color: green
-          pattern: .*INFO.*
-        - color: amber
-          pattern: .*WARNING.*
-        - color: red
-          pattern: .*ERROR.*
-        - color: gray
-          pattern: .*
+      - color: green
+        pattern: .*INFO.*
+      - color: amber
+        pattern: .*WARNING.*
+      - color: red
+        pattern: .*ERROR.*
+      - color: gray
+        pattern: .*
       thresholdPatternsRef: depth
       thresholds:
-        - color: semi-dark-green
-          level: 0
-        - color: orange
-          level: 400
-        - color: red
-          level: 800
+      - color: semi-dark-green
+        level: 0
+      - color: orange
+        level: 400
+      - color: red
+        level: 800
       thresholdsRef: depth
     strokeColorCompound:
-      colors: "..."
+      colors: '...'
       function: max
     tags:
-      - depth
-      - rabbitMQ
+    - depth
+    - rabbitMQ
   temperature:
-    dataRef: grafana-testdata-datasource
+    dataRef: test
     label:
-      valueMappingsRef: ""
+      valueMappingsRef: ''
     labelColor:
       thresholdPatternsRef: queuedepth
 dataRefTransform:
@@ -223,14 +223,14 @@ tagConfig:
   condensed: false
   highlightRgbFactor: 5
   legend:
-    - "Queue Technology:"
-    - rabbitMQ
-    - kafka
-    - "|"
-    - "Flow Attribs:"
-    - inflow
-    - depth
-    - "|"
+  - 'Queue Technology:'
+  - rabbitMQ
+  - kafka
+  - '|'
+  - 'Flow Attribs:'
+  - inflow
+  - depth
+  - '|'
   lowlightAlphaFactor: 0.3
 test:
   testDataBaseOffset: 0
@@ -240,15 +240,15 @@ test:
   testDataStringData: false
 variableThresholdScalars:
   environment:
-    - cellIdPatternScope:
-        - inbox_depth
-      thresholdScalar: 0.2
-      variableValuePattern: dev
+  - cellIdPatternScope:
+    - inbox_depth
+    thresholdScalar: 0.2
+    variableValuePattern: dev
   system:
-    - cellIdPatternScope:
-        - .*box.*
-      thresholdScalar: 2
-      variableValuePattern: .*client.*
+  - cellIdPatternScope:
+    - .*box.*
+    thresholdScalar: 2
+    variableValuePattern: .*client.*
 zoomPanPinch:
   wheelActivationKeys:
-    - Alt
+  - Alt
