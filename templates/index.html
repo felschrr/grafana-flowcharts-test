@@ -1,0 +1,509 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Grafana Flowcharts - Editeur de Configuration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+      defer
+    ></script>
+  </head>
+  <body class="bg-slate-900 text-slate-100 min-h-screen">
+    <div class="container mx-auto p-6" x-data="configEditor()" x-init="init()">
+      <header
+        class="mb-10 flex justify-between items-center bg-slate-800 p-6 rounded-lg shadow-xl border-l-4 border-blue-500"
+      >
+        <div>
+          <h1 class="text-3xl font-bold text-white">
+            Flowcharts Config Editor <span class="text-blue-500">v1.0</span>
+          </h1>
+          <p class="text-slate-400 mt-1">
+            Gérez vos seuils, couleurs et mappings pour Grafana
+          </p>
+        </div>
+        <button
+          @click="saveAll()"
+          class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-8 rounded-lg transition-all shadow-lg active:scale-95 flex items-center gap-2"
+        >
+          <span>Sauvegarder les fichiers</span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+              clip-rule="evenodd"
+            />
+          </svg>
+        </button>
+      </header>
+
+      <div
+        x-show="statusMessage"
+        :class="statusType === 'success' ? 'bg-emerald-900/50 border-emerald-500 text-emerald-200' : 'bg-rose-900/50 border-rose-500 text-rose-200'"
+        class="mb-6 p-4 rounded-lg border flex justify-between items-center sticky top-4 z-50 shadow-2xl"
+        x-transition
+      >
+        <span x-text="statusMessage" class="flex items-center gap-2"></span>
+        <button @click="statusMessage = ''" class="hover:text-white">
+          &times;
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- SITE CONFIGURATION -->
+        <section
+          class="bg-slate-800 rounded-xl overflow-hidden shadow-xl border border-slate-700 h-fit"
+        >
+          <div class="bg-slate-700 px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-blue-400 font-bold">#</span>
+              <h2 class="text-lg font-semibold uppercase tracking-tight">
+                Configuration du Site
+              </h2>
+            </div>
+            <span
+              class="text-[10px] text-slate-400 bg-slate-800 px-2 py-1 rounded"
+              >siteConfig.yaml</span
+            >
+          </div>
+
+          <div class="p-6 space-y-8">
+            <!-- Global Colors -->
+            <div>
+              <h3
+                class="text-xs font-bold uppercase tracking-widest text-slate-500 mb-4 flex items-center gap-2"
+              >
+                Palette de Couleurs
+                <div class="h-px flex-1 bg-slate-700"></div>
+              </h3>
+              <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                <template
+                  x-for="(value, name) in siteConfig.colors"
+                  :key="name"
+                >
+                  <div
+                    class="bg-slate-900/50 p-3 rounded-lg border border-slate-700 hover:border-slate-600 transition-colors"
+                  >
+                    <label
+                      class="block text-[10px] font-bold text-slate-500 mb-2 uppercase"
+                      x-text="name"
+                    ></label>
+                    <div class="flex gap-2 items-center">
+                      <input
+                        type="color"
+                        x-model="siteConfig.colors[name]"
+                        class="w-10 h-10 p-0 rounded-md border border-slate-700 cursor-pointer overflow-hidden"
+                      />
+                      <input
+                        type="text"
+                        x-model="siteConfig.colors[name]"
+                        class="flex-1 bg-slate-800 border-none rounded text-xs px-2 py-1 w-20 text-blue-300 font-mono"
+                      />
+                    </div>
+                  </div>
+                </template>
+              </div>
+            </div>
+
+            <!-- Thresholds -->
+            <div>
+              <h3
+                class="text-xs font-bold uppercase tracking-widest text-slate-500 mb-4 flex items-center gap-2"
+              >
+                Seuils et Alertes
+                <div class="h-px flex-1 bg-slate-700"></div>
+              </h3>
+              <div class="space-y-6">
+                <template
+                  x-for="(rules, name) in siteConfig.thresholds"
+                  :key="name"
+                >
+                  <div
+                    class="border border-slate-700 rounded-xl overflow-hidden bg-slate-900/30 ring-1 ring-slate-700/50 shadow-inner"
+                  >
+                    <div
+                      class="bg-slate-700/30 px-4 py-3 flex justify-between items-center border-b border-slate-700"
+                    >
+                      <span
+                        class="text-sm font-bold text-slate-200"
+                        x-text="name"
+                      ></span>
+                      <button
+                        @click="rules.push({color: 'green', level: 0})"
+                        class="bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 px-3 py-1 rounded text-[10px] font-bold uppercase tracking-wider transition-colors"
+                      >
+                        + Ajouter règle
+                      </button>
+                    </div>
+                    <div class="p-4 space-y-3">
+                      <template x-for="(rule, index) in rules" :key="index">
+                        <div
+                          class="flex gap-4 items-center animate-in slide-in-from-left duration-200"
+                        >
+                          <div class="flex-1 flex gap-2">
+                            <div class="relative w-28">
+                              <select
+                                x-model="rule.color"
+                                class="w-full bg-slate-800 text-xs border border-slate-700 rounded-md px-2 py-2 appearance-none"
+                              >
+                                <template
+                                  x-for="(v, colorName) in siteConfig.colors"
+                                >
+                                  <option
+                                    :value="colorName"
+                                    x-text="colorName"
+                                  ></option>
+                                </template>
+                              </select>
+                              <div
+                                class="absolute right-2 top-2 h-4 w-4 pointer-events-none rounded shadow"
+                                :style="`background-color: ${siteConfig.colors[rule.color]}`"
+                              ></div>
+                            </div>
+                            <div class="relative flex-1">
+                              <span
+                                class="absolute left-3 top-2 text-[10px] text-slate-500 font-bold uppercase"
+                                >&ge;</span
+                              >
+                              <input
+                                type="number"
+                                x-model.number="rule.level"
+                                class="w-full bg-slate-800 border border-slate-700 rounded-md text-xs pl-8 pr-2 py-2 text-white font-mono"
+                                placeholder="Valeur"
+                              />
+                            </div>
+                          </div>
+                          <button
+                            @click="rules.splice(index, 1)"
+                            class="text-slate-600 hover:text-rose-500 p-2 transition-colors"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              class="h-4 w-4"
+                              viewBox="0 0 20 20"
+                              fill="currentColor"
+                            >
+                              <path
+                                fill-rule="evenodd"
+                                d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                                clip-rule="evenodd"
+                              />
+                            </svg>
+                          </button>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                </template>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- PANEL CONFIGURATION -->
+        <section
+          class="bg-slate-800 rounded-xl overflow-hidden shadow-xl border border-slate-700 h-fit"
+        >
+          <div class="bg-slate-700 px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-emerald-400 font-bold">#</span>
+              <h2 class="text-lg font-semibold uppercase tracking-tight">
+                Configuration du Panneau
+              </h2>
+            </div>
+            <span
+              class="text-[10px] text-slate-400 bg-slate-800 px-2 py-1 rounded"
+              >panelConfig.yaml</span
+            >
+          </div>
+
+          <div class="p-6 space-y-8">
+            <!-- General Settings -->
+            <div
+              class="grid grid-cols-2 gap-6 bg-slate-900/30 p-4 rounded-xl border border-slate-700/50"
+            >
+              <div>
+                <label
+                  class="block text-[10px] font-bold text-slate-500 uppercase mb-2 tracking-widest"
+                  >ID Prefix SVG</label
+                >
+                <input
+                  type="text"
+                  x-model="panelConfig.cellIdPreamble"
+                  class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500/20 outline-none text-emerald-400 font-mono"
+                  placeholder="cell-"
+                />
+              </div>
+              <div>
+                <label
+                  class="block text-[10px] font-bold text-slate-500 uppercase mb-2 tracking-widest"
+                  >Méthode d'accès</label
+                >
+                <select
+                  x-model="panelConfig.datapoint"
+                  class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500/20 outline-none"
+                >
+                  <option value="last">Dernier point (Last)</option>
+                  <option value="lastNotNull">Dernier non-nul</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Cells Configuration -->
+            <div>
+              <div class="flex justify-between items-center mb-4">
+                <h3
+                  class="text-xs font-bold uppercase tracking-widest text-slate-500 flex items-center gap-2"
+                >
+                  Mapping des Cellules
+                  <div class="h-px w-20 bg-slate-700"></div>
+                </h3>
+                <button
+                  @click="addCell()"
+                  class="bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-bold px-3 py-1 rounded-md uppercase tracking-wider transition-all shadow-lg active:scale-95"
+                >
+                  + Nouveau mapping
+                </button>
+              </div>
+
+              <div class="space-y-4">
+                <template x-for="(cell, name) in panelConfig.cells" :key="name">
+                  <div
+                    class="bg-slate-900/60 rounded-xl p-5 border border-slate-700 transition-all hover:shadow-2xl hover:bg-slate-900 group relative"
+                  >
+                    <div class="flex justify-between items-center mb-6">
+                      <div class="flex items-center gap-3 flex-1">
+                        <div
+                          class="bg-emerald-900/40 text-emerald-400 p-2 rounded-lg"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-4 w-4"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fill-rule="evenodd"
+                              d="M3 5a2 2 0 012-2h10a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V5zm6.5 1h-2a.5.5 0 000 1h2a.5.5 0 000-1zM7 9a.5.5 0 01.5-.5h5a.5.5 0 010 1h-5A.5.5 0 017 9zm.5 2.5a.5.5 0 000 1h5a.5.5 0 000-1h-5z"
+                              clip-rule="evenodd"
+                            />
+                          </svg>
+                        </div>
+                        <input
+                          type="text"
+                          :value="name"
+                          @change="renameCell(name, $event.target.value)"
+                          class="bg-transparent border-none font-bold text-white text-base p-0 focus:ring-0 w-full hover:bg-slate-800/50 rounded px-2"
+                          title="Renommer l'ID"
+                        />
+                      </div>
+                      <button
+                        @click="deleteCell(name)"
+                        class="opacity-0 group-hover:opacity-100 transition-opacity text-slate-500 hover:text-rose-500 p-2 bg-slate-800 rounded-lg"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="h-4 w-4"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path
+                            fill-rule="evenodd"
+                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                            clip-rule="evenodd"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+
+                    <div class="space-y-4">
+                      <div class="relative">
+                        <label
+                          class="block text-[9px] text-slate-500 font-bold uppercase mb-1 tracking-widest pl-1"
+                          >Source de données (Grafana Alias)</label
+                        >
+                        <input
+                          type="text"
+                          x-model="cell.dataRef"
+                          class="w-full bg-slate-800/80 border border-slate-700/50 rounded-lg text-sm px-4 py-2 text-emerald-100 placeholder:text-slate-600"
+                          placeholder="Alias du capteur (ex: cpu_usage)"
+                        />
+                      </div>
+
+                      <div class="grid grid-cols-2 gap-4">
+                        <div>
+                          <label
+                            class="block text-[9px] text-slate-500 font-bold uppercase mb-1 tracking-widest pl-1"
+                            >Règle de Seuils</label
+                          >
+                          <select
+                            x-model="cell.labelColor.thresholdPatternsRef"
+                            class="w-full bg-slate-800/80 border border-slate-700/50 rounded-lg text-xs px-3 py-2 text-white"
+                          >
+                            <option value="">Par défaut</option>
+                            <template
+                              x-for="(rules, ref) in siteConfig.thresholds"
+                            >
+                              <option :value="ref" x-text="ref"></option>
+                            </template>
+                          </select>
+                        </div>
+                        <div>
+                          <label
+                            class="block text-[9px] text-slate-500 font-bold uppercase mb-1 tracking-widest pl-1"
+                            >Mappage Valeurs</label
+                          >
+                          <select
+                            x-model="cell.label.valueMappingsRef"
+                            class="w-full bg-slate-800/80 border border-slate-700/50 rounded-lg text-xs px-3 py-2 text-white"
+                          >
+                            <option value="">Sans mapping</option>
+                            <template
+                              x-for="(mappings, ref) in siteConfig.valueMappings"
+                            >
+                              <option :value="ref" x-text="ref"></option>
+                            </template>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+
+                <div
+                  x-show="Object.keys(panelConfig.cells).length === 0"
+                  class="text-center py-10 border-2 border-dashed border-slate-700 rounded-xl"
+                >
+                  <p class="text-slate-500 text-sm italic">
+                    Aucune cellule configurée. Cliquez sur le bouton "+" pour
+                    commencer.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <footer
+        class="mt-12 py-8 border-t border-slate-800 text-center text-slate-500 text-xs"
+      >
+        <p>&copy; 2026 Grafana Flowcharts Editor - Déployé avec succès</p>
+      </footer>
+    </div>
+
+    <script>
+      function configEditor() {
+        return {
+          panelConfig: { cells: {} },
+          siteConfig: { colors: {}, thresholds: {}, valueMappings: {} },
+          statusMessage: "",
+          statusType: "success",
+
+          async init() {
+            try {
+              const response = await fetch("/api/config");
+              if (!response.ok) throw new Error("Coud not fetch config");
+              const data = await response.json();
+
+              // Structure defaults if files are empty
+              this.panelConfig = data.panelConfig || {
+                cells: {},
+                cellIdPreamble: "cell-",
+                datapoint: "last",
+              };
+              this.siteConfig = data.siteConfig || {
+                colors: {},
+                thresholds: {},
+                valueMappings: {},
+              };
+
+              // Fix for nested paths in UI
+              Object.values(this.panelConfig.cells).forEach((cell) => {
+                if (!cell.label) cell.label = {};
+                if (!cell.labelColor) cell.labelColor = {};
+              });
+
+              console.log("Configs loaded", data);
+            } catch (err) {
+              this.showStatus("Erreur de chargement: " + err.message, "error");
+            }
+          },
+
+          showStatus(msg, type = "success") {
+            this.statusMessage = msg;
+            this.statusType = type;
+            setTimeout(() => {
+              if (this.statusMessage === msg) this.statusMessage = "";
+            }, 6000);
+          },
+
+          addCell() {
+            if (!this.panelConfig.cells) this.panelConfig.cells = {};
+            const newId =
+              "cell_id_" + (Object.keys(this.panelConfig.cells).length + 1);
+            this.panelConfig.cells[newId] = {
+              dataRef: "",
+              label: { valueMappingsRef: "" },
+              labelColor: { thresholdPatternsRef: "" },
+            };
+          },
+
+          renameCell(oldName, newName) {
+            if (oldName === newName || !newName) return;
+            if (this.panelConfig.cells[newName]) {
+              this.showStatus("Un ID identique existe déjà", "error");
+              return;
+            }
+            // Deep copy instead of direct reference to avoid UI/Alpine reactivity issues
+            this.panelConfig.cells[newName] = JSON.parse(
+              JSON.stringify(this.panelConfig.cells[oldName]),
+            );
+            delete this.panelConfig.cells[oldName];
+          },
+
+          deleteCell(name) {
+            if (confirm(`Supprimer le mapping pour la cellule "${name}" ?`)) {
+              delete this.panelConfig.cells[name];
+            }
+          },
+
+          async saveAll() {
+            this.showStatus("Sauvegarde en cours...", "success");
+            try {
+              const response = await fetch("/api/config", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  panelConfig: this.panelConfig,
+                  siteConfig: this.siteConfig,
+                }),
+              });
+
+              if (response.ok) {
+                this.showStatus("Fichiers YAML mis à jour avec succès !");
+              } else {
+                const err = await response.json();
+                this.showStatus(
+                  "Erreur de sauvegarde: " + (err.error || "Erreur inconnue"),
+                  "error",
+                );
+              }
+            } catch (err) {
+              this.showStatus(
+                "Erreur réseau lors de la sauvegarde: " + err.message,
+                "error",
+              );
+            }
+          },
+        };
+      }
+    </script>
+  </body>
+</html>
