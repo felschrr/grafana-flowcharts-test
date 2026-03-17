@@ -75,8 +75,9 @@ cells:
           level: 400
         - color: red
           level: 800
-      thresholdsRef: depth
-    fillLevel:
+      thresholdsRef: depth    fillColorCompound:
+      colors: []
+      function: max    fillLevel:
       bespokeDataRef: null
       dataRef: test-data-large-cos
       datapoint: last
@@ -132,10 +133,10 @@ cells:
           level: 500
           order: null
         - color: red
-          level: 1000
-          order: null
+          level: 800
       thresholdsRef: depth
     labelColorCompound:
+      colors: []
       function: max
     link:
       params: time
@@ -156,6 +157,9 @@ cells:
         - color: red
           level: 800
       thresholdsRef: depth
+    strokeColorCompound:
+      colors: []
+      function: max
     tags:
       - depth
       - rabbitMQ

@@ -47,13 +47,17 @@ def save_config():
                             
                             # Correction pour labelColorCompound, fillColorCompound, strokeColorCompound
                             # Grafana attend un tableau dans 'colors' s'il est défini. 
-                            # Si c'est "..." (valeur par défaut de l'exemple) ou vide, on le supprime.
+                            # Si c'est "..." (valeur par défaut de l'exemple) ou vide, on met une liste vide [] ou par défaut.
                             compound_attr = f"{attr}Compound"
                             if compound_attr in cell_data:
                                 if 'colors' in cell_data[compound_attr]:
                                     colors = cell_data[compound_attr]['colors']
                                     if colors == "..." or not colors:
-                                        del cell_data[compound_attr]
+                                        # On initialise avec une liste vide pour éviter l'erreur forEach
+                                        cell_data[compound_attr]['colors'] = []
+                                else:
+                                    # Si la clé colors manque, on l'ajoute comme tableau vide
+                                    cell_data[compound_attr]['colors'] = []
 
             with open(PANEL_CONFIG_PATH, 'w', encoding='utf-8') as f:
                 f.write('---\n')
