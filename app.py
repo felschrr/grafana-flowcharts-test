@@ -50,9 +50,11 @@ def save_config():
                             del cell_data['strokeColor']['thresholdPatterns']
 
             with open(PANEL_CONFIG_PATH, 'w', encoding='utf-8') as f:
+                f.write('---\n')
                 yaml.dump(panel_cfg, f, allow_unicode=True, sort_keys=False)
         if 'siteConfig' in data:
             with open(SITE_CONFIG_PATH, 'w', encoding='utf-8') as f:
+                f.write('---\n')
                 yaml.dump(data['siteConfig'], f, allow_unicode=True, sort_keys=False)
         return jsonify({'message': 'Configuration sauvegardée avec succès'})
     except Exception as e:
