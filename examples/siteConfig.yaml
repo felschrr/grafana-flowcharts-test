@@ -1,3 +1,4 @@
+---
 cellColorMappings:
   darkTheme:
     green: light-green
@@ -8,9 +9,9 @@ cellColorMappings:
     orange: orange
     red: red
 colors:
-  amber: '#FFBF00'
-  green: '#00AA00'
-  red: '#FF0000'
+  amber: "#FFBF00"
+  green: "#00AA00"
+  red: "#FF0000"
 linkVariables:
   urlBaseGrafana: https://app.diagrams.net/
   urlBasePlugin: https://github.com/andymchugh/andrewbmchugh-flow-panel/blob/main/
@@ -25,65 +26,65 @@ links:
     url: https://grafana.com/products/cloud/
 thresholdPatterns:
   queuecount:
-  - color: green
-    pattern: .*INFO.*
-  - color: amber
-    pattern: .*WARNING.*
-  - color: red
-    pattern: .*ERROR.*
-  - color: gray
-    pattern: .*
+    - color: green
+      pattern: .*INFO.*
+    - color: amber
+      pattern: .*WARNING.*
+    - color: red
+      pattern: .*ERROR.*
+    - color: gray
+      pattern: .*
   queuedepth:
-  - color: green
-    level: 200
-  - color: amber
-    level: 300
-  - color: red
-    level: 1500
-  - color: gray
-    pattern: .*
+    - color: green
+      level: 200
+    - color: amber
+      level: 300
+    - color: red
+      level: 1500
+    - color: gray
+      pattern: .*
 thresholds:
   queuecount:
-  - color: green
-    level: 10
-  - color: amber
-    level: 30
-  - color: red
-    level: 60
+    - color: green
+      level: 10
+    - color: amber
+      level: 30
+    - color: red
+      level: 60
   queuedepth:
-  - color: green
-    level: 200
-  - color: amber
-    level: 300
-  - color: red
-    level: 1500
+    - color: green
+      level: 200
+    - color: amber
+      level: 300
+    - color: red
+      level: 1500
 valueMappings:
   bypassValve:
-  - text: auto
-    value: 0
-  - text: open
-    value: 1
-  - text: closed
-    value: 2
+    - text: auto
+      value: 0
+    - text: open
+      value: 1
+    - text: closed
+      value: 2
   dbTrans:
-  - text: low
-    valueMax: 300
-  - text: medium
-    valueMax: 600
-    valueMin: 300
-  - text: high
-    valueMin: 600
+    - text: low
+      valueMax: 300
+    - text: medium
+      valueMax: 600
+      valueMin: 300
+    - text: high
+      valueMin: 600
 variableThresholdScalars:
   client:
-  - cellIdPatternScope:
-    - .*box.*
-    thresholdScalar: 2
-    variableValuePattern: .*busy.*
+    - cellIdPatternScope:
+        - .*box.*
+      thresholdScalar: 2
+      variableValuePattern: .*busy.*
   environment:
-  - cellIdPatternScope:
-    - inbox_depth
-    thresholdScalar: 0.2
-    variableValuePattern: dev
+    - cellIdPatternScope:
+        - inbox_depth
+      thresholdScalar: 0.2
+      variableValuePattern: dev
 zoomPanPinch:
   wheelActivationKeys:
-  - Alt
+    - Alt
