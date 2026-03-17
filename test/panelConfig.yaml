@@ -1,0 +1,222 @@
+anchorLinks:
+- link:
+    params: time
+    url: https://grafana.com/
+background:
+  darkThemeColor: yellow
+  lightThemeColor: green
+cellColorMappings:
+  darkTheme:
+    green: light-green
+    orange: light-orange
+    red: light-red
+  lightTheme:
+    green: green
+    orange: orange
+    red: red
+cellIdExtender: '@flowrpt'
+cellIdPreamble: cell-
+cellLabelDecimalPoints: null
+cells:
+  solar-panel:
+    bespoke:
+      constants:
+        clockDataRef: test-data-large-sin
+      dataRefs:
+      - test-data-large-sin
+      - test-data-large-cos
+      datapoint: last
+      drives:
+      - attribsGet:
+          boxWidth: width
+          boxX: x
+        attribsSet:
+          width: boxWidth
+          x: boxX
+        elementName: rect
+        elementPosition: 1
+      formulas:
+      - a = abs(data[clockDataRef])
+      - grafanaMyVarValue = concat(utils.variablesReplace('${myVar} '), string(a))
+      - utils.log('this is some of my namespace', clockDataRef, boxX, boxWidth, a,
+        grafanaMyVarValue, data)
+      namespace: myWidget
+    bespokeDataRef: null
+    clickActions:
+      grafanaVariables:
+        'false':
+          myMulti:
+          - d
+          - e
+          - f
+          myVar1: off-myValue1-${cell.name}
+          myVarN: off-myValueN
+        'true':
+          myMulti:
+          - a
+          - b
+          - c
+          myVar1: on-myValue1-${cell.name}
+          myVarN: on-myValueN
+      highlighterSelection: inflow
+    dataRef: test
+    datapoint: last
+    fillColor:
+      bespokeDataRef: null
+      dataRef: test-data-large-cos
+      datapoint: last
+      gradientMode: hue
+      thresholdPatternsRef: depth
+      thresholds:
+      - color: semi-dark-green
+        level: 0
+      - color: orange
+        level: 400
+      - color: red
+        level: 800
+      thresholdsRef: depth
+    fillColorCompound:
+      colors: '...'
+      function: max
+    fillColorElementFilter:
+    - name: .*
+      position: .*
+    fillLevel:
+      bespokeDataRef: null
+      dataRef: test-data-large-cos
+      datapoint: last
+      fillDirection: bottomToTop
+      thresholdLwrFillPercent: 0
+      thresholdLwrValue: 0
+      thresholdOffValue: 0
+      thresholdUprFillPercent: 100
+      thresholdUprValue: 900
+    flowAnimation:
+      bespokeDataRef: null
+      biasPower: 1
+      dataRef: test-data-large-cos
+      datapoint: last
+      thresholdLwrDurationSecs: 1
+      thresholdLwrValue: 100
+      thresholdOffValue: 0
+      thresholdUprDurationSecs: 0.1
+      thresholdUprValue: 600
+      unidirectional: true
+    label:
+      bespokeDataRef: null
+      dataRef: test-data-large-cos
+      datapoint: last
+      decimalPoints: 0
+      separator: cr
+      units: none
+      unitsPostfix: MyUnits
+      valueMappings:
+      - text: value is null
+        value: null
+      - text: value is 3
+        value: 3
+      - text: value is low
+        valueMax: 300
+      - text: value in range
+        valueMax: 600
+        valueMin: 300
+      - text: value is high
+        valueMin: 600
+      valueMappingsRef: ''
+    labelColor:
+      bespokeDataRef: null
+      dataRef: test-data-large-cos
+      datapoint: last
+      gradientMode: hue
+      thresholdPatternsRef: queuecount
+      thresholds:
+      - color: green
+        level: 0
+        order: null
+      - color: orange
+        level: 500
+        order: null
+      - color: red
+        level: 1000
+        order: null
+      thresholdsRef: depth
+    labelColorCompound:
+      colors: '...'
+      function: max
+    link:
+      params: time
+      sameTab: true
+      url: https://drawio-app.com
+    linkRef: drawio
+    strokeColor:
+      bespokeDataRef: null
+      dataRef: test-data-large-cos
+      datapoint: last
+      gradientMode: hue
+      thresholdPatternsRef: depth
+      thresholds:
+      - color: semi-dark-green
+        level: 0
+      - color: orange
+        level: 400
+      - color: red
+        level: 800
+      thresholdsRef: depth
+    strokeColorCompound:
+      colors: '...'
+      function: max
+    tags:
+    - depth
+    - rabbitMQ
+  temperature:
+    dataRef: test
+    label:
+      valueMappingsRef: ''
+    labelColor:
+      thresholdPatternsRef: queuedepth
+dataRefTransform:
+  namespaced: false
+  queries:
+    ParticularQueryName:
+      tabularKeyColumn: columnNameToSourceDataRefNameValuesFrom
+datapoint: last
+gradientMode: hue
+linkVariables:
+  urlBaseGrafana: https://app.diagrams.net/
+  urlBasePlugin: https://github.com/andymchugh/andrewbmchugh-flow-panel/blob/main/
+linkWindow:
+  sameTab: true
+tagConfig:
+  color: yellow
+  condensed: false
+  highlightRgbFactor: 5
+  legend:
+  - 'Queue Technology:'
+  - rabbitMQ
+  - kafka
+  - '|'
+  - 'Flow Attribs:'
+  - inflow
+  - depth
+  - '|'
+  lowlightAlphaFactor: 0.3
+test:
+  testDataBaseOffset: 0
+  testDataExtendedZero: false
+  testDataNoTime: false
+  testDataSparse: false
+  testDataStringData: false
+variableThresholdScalars:
+  environment:
+  - cellIdPatternScope:
+    - inbox_depth
+    thresholdScalar: 0.2
+    variableValuePattern: dev
+  system:
+  - cellIdPatternScope:
+    - .*box.*
+    thresholdScalar: 2
+    variableValuePattern: .*client.*
+zoomPanPinch:
+  wheelActivationKeys:
+  - Alt
